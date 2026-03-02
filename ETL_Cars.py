@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Step 1: Extract - Load the original Excel file
-input_file = 'Car_sales_modified - Copy.xlsx'  # Replace with your actual file path if needed
+input_file = 'Car_sales_modified - Copy.xlsx'  
 df = pd.read_excel(input_file, sheet_name='Sheet1')
 
 print(f"Extraction complete: {df.shape[0]} rows, {df.shape[1]} columns loaded.")
@@ -12,15 +12,15 @@ print("Unique Sub Categories:", df['Sub_Category'].unique())
 # Step 2: Transform
 
 # 2.1: Data Cleaning
-# Convert Date column to proper datetime (assuming the first date-related column is 'Date')
-date_cols = ['Date', 'Day', 'Month', 'Year']  # Common in this dataset
+# Convert Date column to proper datetime 
+date_cols = ['Date', 'Day', 'Month', 'Year']  
 if 'Date' in df.columns:
     df['Date'] = pd.to_datetime(df['Date'], errors='coerce')
 
 # Remove duplicates if any
 df.drop_duplicates(inplace=True)
 
-# Handle missing values (fill or drop as appropriate; here filling numerics with 0, categoricals with 'Unknown')
+# Handle missing values 
 df.fillna({
     'Customer_Age': df['Customer_Age'].median(),
     'Order_Quantity': 0,
@@ -33,15 +33,14 @@ df.fillna({
     'State': 'Unknown',
 }, inplace=True)
 
-# 2.2: Feature Engineering
-# Calculate Profit Margin if not already useful
+# 2.2: Calculate Profit Margin 
 if 'Profit' in df.columns and 'Revenue' in df.columns:
     df['Profit_Margin_%'] = (df['Profit'] / df['Revenue'] * 100).round(2)
 
-# Create a full date string or extract year-month for aggregation later
+# Create a full date string or extract year-month for aggregation 
 df['Year_Month'] = df['Date'].dt.strftime('%Y-%m')
 
-# 2.3: Rename columns for consistency (optional, make them cleaner)
+# 2.3: Rename columns for consistency
 df.rename(columns={
     'Customer_Age': 'Customer_Age',
     'Age_Group': 'Age_Group',
@@ -56,15 +55,15 @@ df.rename(columns={
     'Revenue': 'Total_Revenue'
 }, inplace=True)
 
-# 2.4: Filter or enrich as needed (example: focus on key countries or categories)
-# df = df[df['Country'] == 'United States']  # Uncomment if you want to filter
+# 2.4: Filter or enrich as needed
+# df = df[df['Country'] == 'United States']  
 
 print("\nTransformation complete:")
 print("New columns added: Profit_Margin_%, Year_Month")
 print("Duplicates removed and missing values handled.")
 print(f"Rows after cleaning: {df.shape[0]}")
 
-# Step 3: Load - Save the transformed data to a new Excel file (and optionally CSV)
+# Step 3: Load - Save the transformed data to a new Excel file
 output_excel = 'Cars_sales_ETL_transformed.xlsx'
 output_csv = 'Cars_sales_ETL_transformed.csv'
 
